@@ -14,7 +14,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Game {
-
+private static boolean fuj = true;
     private static final float[] vertices = {
             0.6f, -0.4f, 0.0f, // 0 -> Top right
             0.6f, -0.6f, 0.0f, // 1 -> Bottom right
@@ -29,12 +29,51 @@ public class Game {
             0.0f, 0.0f, 0.0f,
     };
 
-    private static final float[] textures = {
-            1f, 0f,
-            1f, 1f,
-            0f, 1f,
-            0f, 0f,
+    private static final float[][] textures = {
+            {   //roztáhlý
+                    1f, 0f, // 0 -> Top right
+                    1f, 1f, // 1 -> Bottom right
+                    0f, 1f, // 2 -> Bottom left
+                    0f, 0f, // 3 -> Top left
+            },
+            {   //první sprite
+                    1 / 6f, 0f,
+                    1 / 6f, 1f,
+                    0 / 6f, 1f,
+                    0 / 6f, 0f,
+            },
+            {   //druhej sprite
+                    2 / 6f, 0f,
+                    2 / 6f, 1f,
+                    1 / 6f, 1f,
+                    1 / 6f, 0f,
+            },
+            {   //třetí sprite
+                    3 / 6f, 0f,
+                    3 / 6f, 1f,
+                    2 / 6f, 1f,
+                    2 / 6f, 0f,
+            },
+            {   //štvrtej sprite
+                    4 / 6f, 0f,
+                    4 / 6f, 1f,
+                    3 / 6f, 1f,
+                    3 / 6f, 0f,
+            },
+            {   //pátej sprite
+                    5 / 6f, 0f,
+                    5 / 6f, 1f,
+                    4 / 6f, 1f,
+                    4 / 6f, 0f,
+            },
+            {   //šestej sprite
+                    6 / 6f, 0f,
+                    6 / 6f, 1f,
+                    5 / 6f, 1f,
+                    5 / 6f, 0f,
+            },
     };
+    public static int textureposid = 0;
 
     private static final int[] indices = {
             0, 1, 3, // First triangle
@@ -42,7 +81,7 @@ public class Game {
     };
 
     private static int way = 0; // 0↗ pak doprava */
-    private static float squareX =  0.75f;
+    private static float squareX = 0.75f;
     private static float squareY = -0.25f;
 
     private static int squareVaoId;
@@ -120,8 +159,8 @@ public class Game {
         GL33.glBlendFunc(GL33.GL_SRC_ALPHA, GL33.GL_ONE_MINUS_SRC_ALPHA);
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, textureIndicesId);
 
-        FloatBuffer fit = BufferUtils.createFloatBuffer(textures.length)
-                .put(textures)
+        FloatBuffer fit = BufferUtils.createFloatBuffer(textures[0].length)
+                .put(textures[0])
                 .flip();
 
         // Send the buffer (positions) to the GPU
@@ -149,11 +188,25 @@ public class Game {
     }
 
     public static void update(long window) {
-        //System.out.println("x = " + squareX + ", y = " + squareY);
-        float offset = 0.1f;
+        if (textureposid > 300) {
+            System.out.println("mein führer, ich kann walk");
+            FloatBuffer fit = BufferUtils.createFloatBuffer(textures[textureposid%6+1].length)
+                    .put(textures[textureposid%6+1])
+                    .flip();
+            GL33.glBufferData(GL33.GL_ARRAY_BUFFER, fit, GL33.GL_STATIC_DRAW);
+            GL33.glVertexAttribPointer(2, 2, GL33.GL_FLOAT, false, 0, 0);
+            GL33.glEnableVertexAttribArray(2);
+
+            GL33.glUseProgram(Shaders.shaderProgramId);
+            textureposid++;
+            textureposid -= 300;
+        } else textureposid += 10;
+
+        float offset = 0.2f;
         if (squareY >= 1 - offset || squareY <= -1 + offset || squareX >= 1 - offset || squareX <= -1 + offset) {
             way++;
             System.out.println("hit!");
+            //if (way%2==0) TODO: flip texture
         }
         switch (way % 4) {
             case 0 -> {
@@ -195,7 +248,7 @@ public class Game {
         IntBuffer comp = stack.mallocInt(1);    //neřeš
 
 
-        ByteBuffer img = STBImage.stbi_load("resources/matrix/Untitled.png", width, height, comp, 4); //edit if alpha
+        ByteBuffer img = STBImage.stbi_load("resources/matrix/Cyborg_run.png", width, height, comp, 4); //edit if alpha
         if (img != null) {
             img.flip();
             GL33.glBindTexture(GL33.GL_TEXTURE_2D, textureId);

@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Maze/OpenGLExamples.Maze.iml" filepath="$PROJECT_DIR$/.idea/modules/Maze/OpenGLExamples.Maze.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Maze/OpenGLExamples.Maze.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Maze/OpenGLExamples.Maze.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Maze/OpenGLExamples.Maze.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Maze/OpenGLExamples.Maze.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Window/OpenGLExamples.Window.iml" filepath="$PROJECT_DIR$/.idea/modules/Window/OpenGLExamples.Window.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ShaderUniforms.iml" filepath="$PROJECT_DIR$/.idea/modules/ShaderUniforms.iml" />
     </modules>
   </component>
