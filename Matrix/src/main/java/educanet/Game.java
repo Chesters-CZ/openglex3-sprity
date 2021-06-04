@@ -14,7 +14,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Game {
-private static boolean fuj = true;
+    private static boolean fuj = true;
     private static final float[] vertices = {
             0.6f, -0.4f, 0.0f, // 0 -> Top right
             0.6f, -0.6f, 0.0f, // 1 -> Bottom right
@@ -30,17 +30,11 @@ private static boolean fuj = true;
     };
 
     private static final float[][] textures = {
-            {   //roztáhlý
-                    1f, 0f, // 0 -> Top right
-                    1f, 1f, // 1 -> Bottom right
-                    0f, 1f, // 2 -> Bottom left
-                    0f, 0f, // 3 -> Top left
-            },
             {   //první sprite
-                    1 / 6f, 0f,
-                    1 / 6f, 1f,
-                    0 / 6f, 1f,
-                    0 / 6f, 0f,
+                    1 / 6f, 0f, // 0 -> Top right
+                    1 / 6f, 1f, // 1 -> Bottom right
+                    0 / 6f, 1f, // 2 -> Bottom left
+                    0 / 6f, 0f, // 3 -> Top left
             },
             {   //druhej sprite
                     2 / 6f, 0f,
@@ -188,10 +182,14 @@ private static boolean fuj = true;
     }
 
     public static void update(long window) {
-        if (textureposid > 300) {
-            System.out.println("mein führer, ich kann walk");
-            FloatBuffer fit = BufferUtils.createFloatBuffer(textures[textureposid%6+1].length)
-                    .put(textures[textureposid%6+1])
+        if (fuj){
+            fliptextures();
+            fuj = false;
+        }
+        if (textureposid > 30) {
+            //System.out.println("mein führer, ich kann walk");
+            FloatBuffer fit = BufferUtils.createFloatBuffer(textures[textureposid % 6].length)
+                    .put(textures[textureposid % 6])
                     .flip();
             GL33.glBufferData(GL33.GL_ARRAY_BUFFER, fit, GL33.GL_STATIC_DRAW);
             GL33.glVertexAttribPointer(2, 2, GL33.GL_FLOAT, false, 0, 0);
@@ -199,15 +197,15 @@ private static boolean fuj = true;
 
             GL33.glUseProgram(Shaders.shaderProgramId);
             textureposid++;
-            textureposid -= 300;
+            textureposid -= 30;
         } else textureposid += 10;
 
-        float offset = 0.2f;
+        float offset = 0.1f;
         if (squareY >= 1 - offset || squareY <= -1 + offset || squareX >= 1 - offset || squareX <= -1 + offset) {
-            way++;
             System.out.println("hit!");
-            //if (way%2==0) TODO: flip texture
+            if (++way % 2 == 0) fliptextures();
         }
+        offset = 0.5f;
         switch (way % 4) {
             case 0 -> {
                 matrix = matrix.translate(offset / Main.width, offset / Main.height, 0f);
@@ -239,6 +237,15 @@ private static boolean fuj = true;
 
     }
 
+    private static void fliptextures() {
+        for (int i = 0; i < textures.length; i++) {
+            float prvni = textures[i][0];
+            float druhy = textures[i][4];
+            textures[i][4] = textures[i][6] = prvni;
+            textures[i][0] = textures[i][2] = druhy;
+        }
+    }
+
     private static void loadTexture() {
         textureId = GL33.glGenTextures();
 
@@ -248,7 +255,7 @@ private static boolean fuj = true;
         IntBuffer comp = stack.mallocInt(1);    //neřeš
 
 
-        ByteBuffer img = STBImage.stbi_load("resources/matrix/Cyborg_run.png", width, height, comp, 4); //edit if alpha
+        ByteBuffer img = STBImage.stbi_load("resources/matrix/amogus.png", width, height, comp, 4); //edit if alpha
         if (img != null) {
             img.flip();
             GL33.glBindTexture(GL33.GL_TEXTURE_2D, textureId);
